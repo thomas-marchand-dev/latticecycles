@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lattice Cycles — AI Manufacturing Report</title>
+<style>
+:root{--bg:#0a0a0c;--bg2:#111114;--bg3:#19191e;--bg4:#242429;--tx:#e8e6e1;--tx2:#a8a6a0;--tx3:#6e6c68;--ac:#4fffb0;--bl:#4a9eff;--pu:#a78bfa;--co:#ff7a5c;--am:#ffb84d;--pk:#f472b6;--cy:#22d3ee;--li:#a3e635;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,sans-serif;line-height:1.5}
+::selection{background:rgba(79,255,176,.25)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.mn{font-family:'Courier New',monospace}
+.w{max-width:1100px;margin:0 auto;padding:20px 24px}
+.brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand-left{display:flex;align-items:center;gap:8px}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ac),var(--bl));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg)}
+.brand-info{display:flex;flex-direction:column}
+.brand-name{font-size:17px;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--bl));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.brand-sub{font-size:10px;color:var(--tx3)}
+.brand-tag{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);border:1px solid var(--bd2);padding:4px 10px;border-radius:100px}
+.hero{margin-bottom:24px}
+.hero-ey{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.hero-t{font-size:32px;font-weight:700;line-height:1.1;letter-spacing:-1px;margin-bottom:10px}
+.hero-t span{background:linear-gradient(135deg,var(--ac),var(--bl));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-s{font-size:13px;color:var(--tx2);max-width:600px;line-height:1.7}
+.mrow{display:flex;gap:1px;background:var(--bd);border-radius:14px;overflow:hidden;margin-bottom:20px}
+.mc{flex:1;background:var(--bg2);padding:16px 12px;text-align:center}
+.mc-v{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:1px}
+.mc-l{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.tab{padding:7px 14px;border-radius:100px;font-size:12px;font-weight:400;cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--tx2);font-family:inherit;transition:all .2s}
+.tab:hover{border-color:var(--tx3);color:var(--tx)}
+.tab.on{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600}
+.panel{display:none}.panel.on{display:block}
+.sl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
+.h2{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.desc{font-size:13px;color:var(--tx2);line-height:1.7;max-width:680px;margin-bottom:20px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:5px;margin-bottom:20px}
+.dc{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:10px;cursor:pointer;text-align:center;transition:all .2s}
+.dc:hover{background:var(--bg3);border-color:var(--bd2)}
+.dc.on{background:rgba(79,255,176,.06);border-color:var(--ac)}
+.dc-i{font-size:18px;margin-bottom:3px}
+.dc-n{font-size:11px;font-weight:600}
+.dc-c{font-size:9px;color:var(--tx3)}
+.ph{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.ph-n{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.ph-t{font-size:20px;font-weight:700;margin-bottom:4px}
+.ph-d{font-size:12px;color:var(--tx2);line-height:1.6;max-width:640px}
+.fl{border-left:2px solid var(--bg4);margin-left:10px;padding-left:20px}
+.stp{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;margin-bottom:6px;overflow:hidden;cursor:pointer;transition:all .2s}
+.stp:hover{background:var(--bg3);border-color:var(--bd2)}
+.stp.open{border-color:rgba(79,255,176,.2)}
+.stp-h{padding:12px 14px;display:flex;align-items:center;gap:8px}
+.stp-idx{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.stp-inf{flex:1;min-width:0}
+.stp-nm{font-size:12px;font-weight:600}
+.stp-cn{font-size:9px;color:var(--tx3)}
+.stp-imp{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.stp-il{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
+.dots{display:flex;gap:2px}
+.dots span{width:5px;height:5px;border-radius:50%;background:var(--bg4)}
+.dots span.on{background:var(--ac)}.dots span.hi{background:var(--am)}.dots span.ex{background:var(--co)}
+.stp-ch{color:var(--tx3);font-size:10px;transition:transform .2s;flex-shrink:0}
+.stp.open .stp-ch{transform:rotate(90deg);color:var(--ac)}
+.stp-b{display:none;padding:12px 14px;border-top:1px solid var(--bd)}
+.stp.open .stp-b{display:block}
+.stp-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stp-cl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.stp-cl.cur{color:var(--tx3)}.stp-cl.ai{color:var(--ac)}
+.stp-ct{font-size:12px;color:var(--tx2);line-height:1.6}
+.tgs{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+.tg{padding:2px 7px;border-radius:100px;font-size:9px;font-weight:500}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}
+table.ct{width:100%;border-collapse:collapse;font-size:12px}
+.ct th{text-align:left;padding:8px 10px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);border-bottom:1px solid var(--bd2);font-weight:500}
+.ct td{padding:8px 10px;border-bottom:1px solid var(--bd);color:var(--tx2)}
+.ct tbody tr:hover{background:var(--bg2)}
+.ct tfoot td{font-weight:700;color:var(--tx);border-top:1px solid var(--bd2);border-bottom:none;padding-top:10px}
+.green{color:var(--ac)!important;font-weight:600}
+.red{color:var(--co)!important;font-weight:600}
+.bar-r{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.bar-l{width:140px;font-size:11px;color:var(--tx2);text-align:right;flex-shrink:0}
+.bar-tk{flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-f{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-weight:600;color:var(--bg)}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.inv-cat{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.inv-nm{font-size:13px;font-weight:600;margin-bottom:8px}
+.inv-row{display:flex;justify-content:space-between;font-size:11px;color:var(--tx2);padding:2px 0;border-bottom:1px solid var(--bd)}
+.inv-row:last-child{border:none}
+.inv-val{font-weight:600;color:var(--tx)}
+.tlp{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:20px}
+.tlp-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tlp-bg{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+.tlp-rg{font-size:11px;color:var(--tx3)}
+.tlp-t{font-size:16px;font-weight:700;margin-bottom:4px}
+.tlp-d{font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:12px;max-width:600px}
+.tlp-it{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-bottom:14px}
+.tli{font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px}
+.tli-d{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tlp-ms{display:flex;gap:16px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--bd)}
+.tlm-v{font-size:14px;font-weight:700}
+.tlm-l{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
+.tlc{width:2px;height:16px;background:var(--bg4);margin:0 auto}
+.org-r{display:flex;justify-content:center}.org-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.org-cv{width:2px;height:14px;background:var(--bg4);margin:0 auto}
+.fnote{padding:14px 16px;background:var(--bg2);border-radius:12px;border:1px solid var(--bd);margin-top:20px}
+.fnote p{font-size:11px;color:var(--tx3);line-height:1.6}
+@media(max-width:640px){
+  .stp-cols,.tlp-it{grid-template-columns:1fr}
+  .org-3{grid-template-columns:1fr}
+  .mrow{flex-direction:column}
+  .bar-l{width:100px;font-size:10px}
+  .inv-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="w" id="app"></div>
+<script>
+var C={bg:"#0a0a0c",bg2:"#111114",bg3:"#19191e",bg4:"#242429",tx:"#e8e6e1",tx2:"#a8a6a0",tx3:"#6e6c68",ac:"#4fffb0",bl:"#4a9eff",pu:"#a78bfa",co:"#ff7a5c",am:"#ffb84d",pk:"#f472b6",cy:"#22d3ee",li:"#a3e635"};
+var TAGS={vision:{l:"Vision",bg:"rgba(167,139,250,.15)",c:C.pu},predict:{l:"Predictive",bg:"rgba(74,158,255,.15)",c:C.bl},optimize:{l:"Optimize",bg:"rgba(79,255,176,.12)",c:C.ac},automate:{l:"Automate",bg:"rgba(255,122,92,.15)",c:C.co},twin:{l:"Digital twin",bg:"rgba(244,114,182,.15)",c:C.pk},llm:{l:"LLM",bg:"rgba(34,211,238,.15)",c:C.cy},logistics:{l:"Logistics",bg:"rgba(163,230,53,.15)",c:C.li}};
+var IL={1:"Low",2:"Moderate",3:"High",4:"Very high",5:"Transformative"};
+var DATA=[
+{id:"supply",nm:"Supply chain",icon:"\uD83C\uDF10",cl:C.li,gain:"45\u201360%",desc:"Sourcing aluminum, groupsets, motors, batteries across 1,850+ SKUs.",steps:[
+{nm:"Supplier scouting",p:"Manual research. Weeks/supplier.",a:"LLM scans databases, patents. Hours.",tg:["llm","predict"],im:4},
+{nm:"Price negotiation",p:"Email over weeks. Spreadsheet benchmarks.",a:"Agent w/ LME aluminum, lithium spot, BOM models.",tg:["llm","optimize"],im:4},
+{nm:"Demand forecasting",p:"Historical + gut. 20\u201330% error.",a:"ML: POS, web, weather, season. <10% error.",tg:["predict","optimize"],im:5},
+{nm:"Purchase orders",p:"Manual POs. Part number errors.",a:"Auto-PO from forecast + inventory. BOM cross-check.",tg:["automate","llm"],im:4},
+{nm:"Supplier monitoring",p:"Quarterly manual scorecards.",a:"Real-time OTD, PPM. Auto-escalates.",tg:["predict","llm"],im:3},
+{nm:"Inbound logistics",p:"Email/phone. Reactive.",a:"AIS + port feeds. Predicts delays 2\u20133 wks.",tg:["logistics","predict"],im:4},
+{nm:"Customs & compliance",p:"Manual HS codes, filings.",a:"Auto-classify, duty drawback, alerts.",tg:["llm","automate"],im:3},
+{nm:"Multi-tier risk",p:"Annual spreadsheet.",a:"Supplier graph to tier-3. Simulates disruptions.",tg:["predict","llm"],im:5}]},
+{id:"inv",nm:"Inventory",icon:"\uD83D\uDCE6",cl:C.cy,gain:"35\u201350%",desc:"$2.8M initial stock, $9.2M annual. AI perpetual inventory and AR kitting.",steps:[
+{nm:"Receiving & inspection",p:"Manual count. Days to find errors.",a:"Vision scans pallets. Real-time flags.",tg:["vision","automate"],im:4},
+{nm:"Warehouse slotting",p:"Fixed locations. Wasted travel.",a:"Dynamic slotting by schedule.",tg:["optimize","logistics"],im:3},
+{nm:"Perpetual inventory",p:"Annual count. <95%.",a:"RFID + vision. 99.5%+.",tg:["vision","automate"],im:4},
+{nm:"Kitting",p:"Printed lists. 2\u20135% error.",a:"AR pick-to-light. <0.1% error.",tg:["automate","vision"],im:4},
+{nm:"Reorder management",p:"Static manual points.",a:"Daily dynamic. \u221230% stockouts.",tg:["predict","optimize"],im:4},
+{nm:"Obsolescence",p:"Year-end discovery.",a:"Flags 6+ months early.",tg:["predict","llm"],im:3},
+{nm:"Delivery scheduling",p:"Supplier-preferred. Bottlenecks.",a:"Level-loads to production.",tg:["logistics","optimize"],im:3}]},
+{id:"frame",nm:"Frame mfg",icon:"\uD83D\uDD29",cl:C.bl,gain:"35\u201355%",desc:"Raw aluminum \u2192 welded, heat-treated frames. 15 steps with twins & adaptive welding.",steps:[
+{nm:"Material prep",cn:"\u5907\u7BA1\u6599",p:"Billets inspected, sorted.",a:"Spectroscopy. Auto-reject.",tg:["vision","predict"],im:3},
+{nm:"Extrusion",cn:"\u539F\u6599\u5904\u7406",p:"Billets \u2192 tube stock.",a:"RL: speed/temp. \u221240% variance.",tg:["optimize","twin"],im:4},
+{nm:"Tube cutting",cn:"\u7BA1\u6599\u5207\u5272",p:"Cut to length.",a:"Nesting. \u221215\u201325% scrap.",tg:["optimize"],im:2},
+{nm:"Pre-forming",cn:"\u6210\u578B\u524D\u5904\u7406",p:"Anneal for ductility.",a:"Predictive soak per lot.",tg:["predict","twin"],im:3},
+{nm:"Hydroforming",cn:"\u6C34\u6CE8\u53D8\u5F02\u578B\u7BA1",p:"High-pressure water.",a:"Twin: thinning, burst. Auto-tunes.",tg:["twin","optimize"],im:4},
+{nm:"Molding & CNC",cn:"\u9020\u578B\u52A0\u5DE5",p:"Trim, deburr, profile.",a:"Vision\u2192CNC closed-loop.",tg:["vision","automate"],im:4},
+{nm:"Tube bending",cn:"\u538B\u5F2F\u7BA1",p:"CNC bending.",a:"Springback prediction. \u221260% scrap.",tg:["predict","optimize"],im:4},
+{nm:"End processing",cn:"\u7AEF\u90E8\u5904\u7406",p:"Notch, miter, laser.",a:"Generative miter + scheduling.",tg:["optimize","automate"],im:3},
+{nm:"Cleaning",cn:"\u6E05\u6D01\u5DE5\u5E8F",p:"Degrease, etch, rinse.",a:"IoT bath + UV vision.",tg:["predict","vision"],im:2},
+{nm:"Small parts weld",cn:"\u786C\u7EC4\u5C0F\u4EF6",p:"Attach dropouts, guides.",a:"Cobot + 0.1mm vision.",tg:["automate","vision"],im:3},
+{nm:"Triangle welding",cn:"\u4E09\u89D2\u70B9\u7EC4",p:"Fixture, tack-weld.",a:"Acoustic monitor. Auto-fixture.",tg:["twin","predict"],im:4},
+{nm:"Frame assembly weld",cn:"\u7EC4\u5408\u7EC4\u63A5",p:"Full-pen weld. Most critical.",a:"Adaptive bead-by-bead. Replaces X-ray.",tg:["vision","predict","automate"],im:5},
+{nm:"Adjust & straighten",cn:"\u7CBE\u5EA6\u8C03\u6574",p:"3D measure, press.",a:"Scan heatmap. Single-pass.",tg:["vision","automate","twin"],im:4},
+{nm:"Heat treat T4\u2192T6",cn:"\u70ED\u5904\u7406",p:"530\u00B0C quench, 175\u00B0C age.",a:"Twin + per-lot aging.",tg:["twin","predict","optimize"],im:4},
+{nm:"Post-heat straighten",cn:"\u6821\u6B63",p:"Final align.",a:"Scan\u2192press\u2192verify <60s.",tg:["automate","vision"],im:3}]},
+{id:"ebike",nm:"E-bike systems",icon:"\u26A1",cl:C.pu,gain:"40\u201355%",desc:"Motor, battery, controller, harness for 6,000 e-bikes/year (60%).",steps:[
+{nm:"Motor inspection",p:"Batch-sampled.",a:"100% dyno <90s.",tg:["automate","predict"],im:4},
+{nm:"Battery grading",p:"Spot-check.",a:"Full impedance. Predicts cycle-life.",tg:["predict","vision"],im:5},
+{nm:"Harness prep",p:"Hand crimp. 3% defect.",a:"Auto-crimp + vision. <0.05%.",tg:["automate","vision"],im:4},
+{nm:"Controller flash",p:"Manual firmware.",a:"Auto per serial/market.",tg:["automate","llm"],im:3},
+{nm:"Motor mount & cal",p:"Press + manual cal.",a:"Robotic press. <1% cal.",tg:["automate","optimize"],im:4},
+{nm:"Battery + CAN bus",p:"Dock, laptop test.",a:"Auto: latch, CAN, compat. 30s.",tg:["automate","predict"],im:4},
+{nm:"Range model",p:"Generic estimate.",a:"Per-bike: grade, curve, terrain.",tg:["predict","twin"],im:3},
+{nm:"Safety cert",p:"External lab $15\u201325K.",a:"In-line pre-cert. 3\u21921 cycles.",tg:["automate","predict"],im:4}]},
+{id:"paint",nm:"Painting",icon:"\uD83C\uDFA8",cl:C.am,gain:"35\u201350%",desc:"Machining \u2192 surface prep \u2192 primer \u2192 base coat \u2192 decals \u2192 clear coat \u2192 bake.",steps:[
+{nm:"Precision machining",p:"BB, HT, ST surfaces.",a:"Adaptive CNC via probe.",tg:["automate","optimize"],im:3},
+{nm:"Surface treatment",p:"Conversion coating.",a:"Bath chemistry 24/7.",tg:["predict","optimize"],im:2},
+{nm:"Polishing",p:"Grind welds.",a:"Force-controlled robot. 3\u00D7.",tg:["automate","vision"],im:4},
+{nm:"Repair & putty",p:"Fill defects. 3 rounds.",a:"Vision + auto-dispense. 1 round.",tg:["vision","automate"],im:3},
+{nm:"Masking",p:"Hand plugs/tape.",a:"Robotic templates + vision.",tg:["automate","vision"],im:3},
+{nm:"Primer + base coat",p:"Inconsistent film.",a:"AI gun path. \u00B15\u03BCm. \u0394E<1.0.",tg:["automate","optimize"],im:4},
+{nm:"Decals",p:"Hand-placed. \u00B13mm.",a:"Robotic vision. \u00B10.3mm.",tg:["automate","vision"],im:4},
+{nm:"Clear coat & bake",p:"180\u00B0C. Visual QC.",a:"12-angle AI. Feeds spray agent.",tg:["vision","predict"],im:4}]},
+{id:"assembly",nm:"Assembly",icon:"\uD83D\uDD27",cl:C.co,gain:"40\u201360%",desc:"Painted frame \u2192 complete bike. Fork, wheels, drivetrain, brakes, cockpit, e-bike, accessories.",steps:[
+{nm:"Fork & headset",p:"Torque by feel.",a:"Servo press + digital torque.",tg:["automate","optimize"],im:3},
+{nm:"Bottom bracket",p:"Over-torque cracks.",a:"Robotic + cross-thread detect.",tg:["automate","predict"],im:4},
+{nm:"Drivetrain",p:"15 min indexing.",a:"Auto-index all gears. 90s.",tg:["automate","optimize"],im:5},
+{nm:"Wheel build",p:"20\u201340 min/wheel.",a:"Robot lace+true <0.3mm. 4\u00D7.",tg:["automate","optimize"],im:4},
+{nm:"Brake bleeding",p:"Air = #1 warranty.",a:"Vacuum-fill 60s. Zero bubbles.",tg:["automate","predict"],im:5},
+{nm:"Cockpit & cables",p:"Internal routing slow.",a:"AR-guided. \u221270% time.",tg:["automate","llm"],im:3},
+{nm:"E-bike integration",p:"Connect, dock, pair.",a:"Auto-commission 45s.",tg:["automate","predict"],im:4},
+{nm:"Final check",p:"Manual verify.",a:"Test stand: load, force. 2 min.",tg:["automate","vision"],im:4}]},
+{id:"qc",nm:"Quality control",icon:"\u2705",cl:C.pk,gain:"50\u201370%",desc:"Geometry, brakes, drivetrain, electrical, cosmetics, ride sim, traceability.",steps:[
+{nm:"Frame geometry",p:"Alignment jig.",a:"Laser 10s. \u00B10.1mm.",tg:["vision","automate"],im:4},
+{nm:"Brake performance",p:"Hand test.",a:"Dyno ISO 4210. 100%.",tg:["automate","predict"],im:4},
+{nm:"Drivetrain noise",p:"QC listener.",a:"Acoustic AI: 15+ signatures.",tg:["vision","predict"],im:5},
+{nm:"E-bike electrical",p:"Manual check.",a:"200+ tests, 3 min.",tg:["automate","predict"],im:4},
+{nm:"Cosmetic inspection",p:"Visual QC staff.",a:"12-angle camera AI.",tg:["vision","automate"],im:4},
+{nm:"Ride simulation",p:"Sample on track.",a:"Rig: 50km in 5 min.",tg:["automate","twin"],im:4},
+{nm:"Traceability",p:"Fragmented records.",a:"Digital birth cert per bike.",tg:["automate","llm"],im:3}]},
+{id:"ship",nm:"Packaging",icon:"\uD83D\uDE9A",cl:C.ac,gain:"30\u201345%",desc:"Boxing, carrier selection, dealer allocation, DTC last-mile for 10K bikes/year.",steps:[
+{nm:"Packaging",p:"Material varies.",a:"Cut-to-size. \u221225% waste.",tg:["optimize","automate"],im:3},
+{nm:"Labeling",p:"Wrong-market common.",a:"Auto per market + vision.",tg:["automate","vision","llm"],im:3},
+{nm:"FG warehouse",p:"FIFO broken.",a:"WMS: velocity, FIFO.",tg:["logistics","optimize"],im:3},
+{nm:"Order allocation",p:"Complex multi-SKU.",a:"Optimize: promise, cost.",tg:["optimize","logistics"],im:4},
+{nm:"Carrier selection",p:"Relationship-based.",a:"Multi-carrier real-time.",tg:["logistics","optimize"],im:4},
+{nm:"Dealer distribution",p:"Political.",a:"Data-driven: velocity, tier.",tg:["predict","optimize"],im:4}]}
+];
+var ALLOC=[{l:"Production equipment",v:8.5,c:C.bl},{l:"Facility & buildout",v:7.2,c:C.co},{l:"Robotics & AI hardware",v:4.8,c:C.pu},{l:"Team (18-mo runway)",v:3.2,c:C.am},{l:"Initial inventory",v:2.8,c:C.li},{l:"AI software",v:2.4,c:C.cy},{l:"Working capital",v:1.1,c:C.tx3}];
+var UNIT=[{i:"Frame materials",c:185,l:165},{i:"Frame mfg labor",c:280,l:125},{i:"Components",c:620,l:590},{i:"E-bike powertrain",c:420,l:395},{i:"Paint & finishing",c:95,l:55},{i:"Assembly labor",c:145,l:65},{i:"QC & testing",c:40,l:15},{i:"Packaging",c:35,l:28},{i:"Scrap & rework",c:85,l:32},{i:"Overhead",c:120,l:155}];
+var INV=[
+{cat:"Raw materials",nm:"Aluminum 6061/7005",rows:[["Annual","~45 tons"],["Cost","$3.80\u20134.50/kg"],["Stock","12t ($48K)"],["Lead","6\u20138 wks"]]},
+{cat:"Drivetrain",nm:"Shimano/SRAM sets",rows:[["SKUs","24 (6 tiers)"],["Annual","10K sets"],["Cost","$180\u2013620/set"],["Stock","2,500 ($680K)"]]},
+{cat:"Motors",nm:"Bafang/Shimano STEPS",rows:[["SKUs","4 models"],["Annual","6,000"],["Cost","$165\u2013310"],["Stock","1,500 ($340K)"]]},
+{cat:"Batteries",nm:"Li-ion 36V/48V",rows:[["SKUs","3 (400\u2013700Wh)"],["Annual","6,000"],["Cost","$185\u2013290"],["Stock","1,500 ($360K)"]]},
+{cat:"Wheels",nm:"Rims, hubs, spokes, tires",rows:[["SKUs","140+ combos"],["Annual","10K pairs"],["Cost","$85\u2013240/pr"],["Stock","2,500 ($310K)"]]},
+{cat:"Brakes",nm:"Hydraulic disc sets",rows:[["SKUs","8 models"],["Annual","10K sets"],["Cost","$45\u2013185"],["Stock","2,500 ($180K)"]]},
+{cat:"Small parts",nm:"Cables, bolts, BBs",rows:[["SKUs","1,200+"],["Annual","$420K"],["Per bike","$42"],["Stock","$105K"]]},
+{cat:"Paint",nm:"Primer, base, clear",rows:[["SKUs","85"],["Annual","$280K"],["Per frame","$28"],["Stock","$70K"]]}
+];
+
+var state={tab:"process",dom:0};
+function h(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+function dots(v){return Array.from({length:5},function(_,i){var c=i<v?"on":"";if(c&&v>=5)c="on ex";else if(c&&v>=4)c="on hi";return '<span class="'+c+'"></span>';}).join("");}
+function render(){
+  var app=document.getElementById("app");
+  app.innerHTML="";
+  var totalSteps=DATA.reduce(function(s,x){return s+x.steps.length;},0);
+
+  // Brand
+  app.innerHTML+='<div class="brand"><div class="brand-left"><div class="brand-icon">L</div><div class="brand-info"><span class="brand-name">Lattice Cycles</span><span class="brand-sub">a Euphree group company</span></div></div><span class="brand-tag mn">$30M seed \u00B7 AI-powered manufacturing</span></div>';
+
+  // Hero
+  app.innerHTML+='<div class="hero"><div class="hero-ey mn">Seed round manufacturing plan</div><div class="hero-t">10,000 bikes/year,<br><span>powered by AI agents</span></div><div class="hero-s">8 domains, '+totalSteps+' steps, 50+ AI agents helping people and robots build premium bikes. From raw aluminum to boxed bike in 18 months.</div></div>';
+
+  // Stats
+  var stats=[["$30M","Seed",C.ac],["10K","Bikes/yr",C.bl],["42","Team",C.pu],["50+","Agents",C.co],["18mo","To prod",C.am]];
+  var sr='<div class="mrow">';stats.forEach(function(s){sr+='<div class="mc"><div class="mc-v" style="color:'+s[2]+'">'+s[0]+'</div><div class="mc-l mn">'+s[1]+'</div></div>';});sr+='</div>';
+  app.innerHTML+=sr;
+
+  // Tabs
+  var tabs=[["process","I. Process"],["cost","II. Costs"],["inventory","III. Inventory"],["timeline","IV. Timeline"],["org","V. Team"]];
+  var tr='<div class="tabs">';tabs.forEach(function(t){tr+='<button class="tab'+(state.tab===t[0]?" on":"")+'" data-tab="'+t[0]+'">'+t[1]+'</button>';});tr+='</div>';
+  app.innerHTML+=tr;
+
+  // Panels
+  app.innerHTML+='<div id="p-process" class="panel'+(state.tab==="process"?" on":"")+'"></div>';
+  app.innerHTML+='<div id="p-cost" class="panel'+(state.tab==="cost"?" on":"")+'"></div>';
+  app.innerHTML+='<div id="p-inventory" class="panel'+(state.tab==="inventory"?" on":"")+'"></div>';
+  app.innerHTML+='<div id="p-timeline" class="panel'+(state.tab==="timeline"?" on":"")+'"></div>';
+  app.innerHTML+='<div id="p-org" class="panel'+(state.tab==="org"?" on":"")+'"></div>';
+
+  // Tab clicks
+  app.querySelectorAll(".tab").forEach(function(btn){btn.addEventListener("click",function(){state.tab=this.dataset.tab;render();});});
+
+  if(state.tab==="process") renderProcess();
+  if(state.tab==="cost") renderCost();
+  if(state.tab==="inventory") renderInventory();
+  if(state.tab==="timeline") renderTimeline();
+  if(state.tab==="org") renderOrg();
+}
+
+function renderProcess(){
+  var el=document.getElementById("p-process");
+  var d=DATA[state.dom];
+  // Domain grid
+  var g='<div class="dgrid">';
+  DATA.forEach(function(dd,i){g+='<div class="dc'+(i===state.dom?" on":"")+'" data-dom="'+i+'"><div class="dc-i">'+dd.icon+'</div><div class="dc-n">'+dd.nm+'</div><div class="dc-c mn">'+dd.steps.length+' steps \u00B7 '+dd.gain+'</div></div>';});
+  g+='</div>';
+  // Phase header
+  g+='<div class="ph"><div class="ph-n mn">Domain '+(state.dom+1)+'/'+DATA.length+'</div><div class="ph-t">'+d.icon+' '+d.nm+'</div><div class="ph-d">'+d.desc+'</div></div>';
+  // Steps
+  g+='<div class="fl">';
+  d.steps.forEach(function(st,i){
+    var cn=st.cn?'<div class="stp-cn mn">'+st.cn+'</div>':"";
+    var tgs=st.tg.map(function(t){return '<span class="tg" style="background:'+TAGS[t].bg+';color:'+TAGS[t].c+'">'+TAGS[t].l+'</span>';}).join("");
+    g+='<div class="stp" data-step="'+i+'"><div class="stp-h"><div class="stp-idx mn" style="background:'+d.cl+'20;color:'+d.cl+'">'+String(i+1).padStart(2,"0")+'</div><div class="stp-inf"><div class="stp-nm">'+st.nm+'</div>'+cn+'</div><div class="stp-imp"><span class="stp-il mn">'+IL[st.im]+'</span><div class="dots">'+dots(st.im)+'</div></div><span class="stp-ch">\u25B6</span></div><div class="stp-b"><div class="stp-cols"><div><div class="stp-cl cur mn">Current</div><div class="stp-ct">'+st.p+'</div></div><div><div class="stp-cl ai mn">\u26A1 AI agent</div><div class="stp-ct">'+st.a+'</div></div></div><div class="tgs">'+tgs+'</div></div></div>';
+  });
+  g+='</div>';
+  el.innerHTML=g;
+  el.querySelectorAll(".dc").forEach(function(c){c.addEventListener("click",function(){state.dom=+this.dataset.dom;render();});});
+  el.querySelectorAll(".stp").forEach(function(s){s.addEventListener("click",function(){this.classList.toggle("open");});});
+}
+
+function renderCost(){
+  var el=document.getElementById("p-cost");
+  var o='<div class="sl mn">Section II</div><div class="h2">$30M seed allocation</div><div class="desc">18-month runway. 10K bikes/year from 40K sqft.</div>';
+  o+='<div class="mrow"><div class="mc"><div class="mc-v" style="color:'+C.ac+'">$30M</div><div class="mc-l mn">Seed</div></div><div class="mc"><div class="mc-v" style="color:'+C.bl+'">$28\u201335M</div><div class="mc-l mn">Yr 2 rev</div></div><div class="mc"><div class="mc-v" style="color:'+C.am+'">42\u201348%</div><div class="mc-l mn">Margin</div></div></div>';
+  o+='<div style="margin-bottom:24px">';
+  ALLOC.forEach(function(a){o+='<div class="bar-r"><div class="bar-l">'+a.l+'</div><div class="bar-tk"><div class="bar-f" style="width:'+Math.round(a.v/8.5*100)+'%;background:'+a.c+'">$'+a.v+'M</div></div></div>';});
+  o+='</div>';
+  o+='<div style="border-top:1px solid rgba(255,255,255,.14);padding-top:20px;margin-bottom:8px"><div style="font-size:16px;font-weight:700;margin-bottom:4px">Per-bike unit economics</div><div style="font-size:11px;color:'+C.tx2+';margin-bottom:12px">AI cuts labor \u221255%, scrap \u221240% vs. conventional.</div></div>';
+  o+='<div style="overflow-x:auto"><table class="ct"><thead><tr><th class="mn">Component</th><th class="mn">Conv.</th><th class="mn">Lattice</th><th class="mn">\u0394</th></tr></thead><tbody>';
+  UNIT.forEach(function(r){var pct=Math.round((r.l-r.c)/r.c*100);o+='<tr><td>'+r.i+'</td><td style="color:'+C.tx3+'">$'+r.c+'</td><td style="font-weight:600">$'+r.l+'</td><td class="'+(pct<=0?"green":"red")+'">'+(pct>0?"+":"")+pct+'%</td></tr>';});
+  o+='</tbody><tfoot><tr><td style="font-weight:700">Total (e-bike)</td><td style="color:'+C.tx3+'">$2,025</td><td class="green" style="font-weight:700">$1,625</td><td class="green" style="font-weight:700">\u221220%</td></tr></tfoot></table></div>';
+  el.innerHTML=o;
+}
+
+function renderInventory(){
+  var el=document.getElementById("p-inventory");
+  var o='<div class="sl mn">Section III</div><div class="h2">Inventory & parts plan</div><div class="desc">BOM for 10K bikes/year (60% e-bike). Initial stock = first 2,500 units.</div>';
+  o+='<div class="mrow"><div class="mc"><div class="mc-v" style="color:'+C.ac+'">1,850+</div><div class="mc-l mn">SKUs</div></div><div class="mc"><div class="mc-v" style="color:'+C.bl+'">$2.8M</div><div class="mc-l mn">Initial stock</div></div><div class="mc"><div class="mc-v" style="color:'+C.am+'">$9.2M</div><div class="mc-l mn">Annual spend</div></div></div>';
+  o+='<div class="inv-grid">';
+  INV.forEach(function(item){o+='<div class="card"><div class="inv-cat mn">'+item.cat+'</div><div class="inv-nm">'+item.nm+'</div>';item.rows.forEach(function(r,j){o+='<div class="inv-row'+(j===item.rows.length-1?" last":"")+'"><span>'+r[0]+'</span><span class="inv-val">'+r[1]+'</span></div>';});o+='</div>';});
+  o+='</div>';
+  el.innerHTML=o;
+}
+
+function renderTimeline(){
+  var el=document.getElementById("p-timeline");
+  function tlp(phase,range,title,desc,items,metrics,bc,bg){
+    var o='<div class="tlp"><div class="tlp-hd"><span class="tlp-bg mn" style="background:'+bg+';color:'+bc+'">'+phase+'</span><span class="tlp-rg mn">'+range+'</span></div><div class="tlp-t">'+title+'</div><div class="tlp-d">'+desc+'</div><div class="tlp-it">';
+    items.forEach(function(it){o+='<div class="tli"><span class="tli-d" style="background:'+it[1]+'"></span>'+it[0]+'</div>';});
+    o+='</div><div class="tlp-ms">';
+    metrics.forEach(function(m){o+='<div><div class="tlm-v" style="color:'+m[1]+'">'+m[0]+'</div><div class="tlm-l mn">'+m[2]+'</div></div>';});
+    o+='</div></div>';return o;
+  }
+  var o='<div class="sl mn">Section IV</div><div class="h2">18-month launch</div><div class="desc">Lease signed \u2192 10K/year. First bikes ship month 12.</div>';
+  o+=tlp("Phase 1","Mo 1\u20136","Facility buildout & hiring","Lease, renovate, install CNC + hydroform + heat treat. Hire 28 of 42. Begin AI platform.",[["40K sqft facility",C.co],["CNC + hydroform installed",C.bl],["Heat treat commissioned",C.bl],["Data lake + edge compute",C.cy],["Supplier contracts signed",C.li],["28 team members hired",C.ac]],[["$16.8M",C.ac,"Deployed"],["0",C.bl,"Shipped"],["28",C.am,"Team"],["8",C.co,"Agents dev"]],C.ac,"rgba(79,255,176,.12)");
+  o+='<div class="tlc"></div>';
+  o+=tlp("Phase 2","Mo 7\u201312","Commission & first bikes","Weld cells, paint booth, assembly line. 200-bike pilot. First customer shipments.",[["6 weld cells + adaptive agent",C.bl],["Paint line + AI spray",C.am],["Assembly + torque agents",C.co],["E-bike station live",C.pu],["QC + acoustic AI",C.pk],["200 bikes shipped",C.ac]],[["$25.4M",C.ac,"Deployed"],["200",C.bl,"Shipped"],["38",C.am,"Team"],["32",C.co,"Agents"]],C.bl,"rgba(74,158,255,.12)");
+  o+='<div class="tlc"></div>';
+  o+=tlp("Phase 3","Mo 13\u201318","Ramp to 10K/year","200 bikes/week sustained. Cross-domain feedback loops. Target unit economics achieved.",[["Hydroform twin live",C.bl],["Auto derailleur + wheel true",C.co],["Vacuum brake bleed at scale",C.co],["Digital birth cert/bike",C.pk],["Supply risk graph",C.li],["200/week sustained",C.am]],[["$30M",C.ac,"Deployed"],["3,000+",C.bl,"Shipped"],["42",C.am,"Full team"],["50+",C.co,"Agents"]],C.pu,"rgba(167,139,250,.12)");
+  el.innerHTML=o;
+}
+
+function renderOrg(){
+  var el=document.getElementById("p-org");
+  function oc(role,rc,people,desc,tags,bc){
+    var o='<div class="card" style="border-top:2px solid '+bc+'"><div style="font-size:13px;font-weight:700;color:'+rc+';margin-bottom:1px">'+role+'</div>';
+    if(people)o+='<div class="mn" style="font-size:10px;color:'+C.tx3+';margin-bottom:4px">'+people+'</div>';
+    o+='<div style="font-size:11px;color:'+C.tx2+';line-height:1.5;margin-bottom:8px">'+desc+'</div>';
+    o+='<div style="display:flex;flex-wrap:wrap;gap:3px">';tags.forEach(function(t){o+='<span style="padding:2px 6px;border-radius:100px;font-size:9px;background:'+C.bg4+';color:'+C.tx3+'">'+t+'</span>';});
+    o+='</div></div>';return o;
+  }
+  var o='<div class="sl mn">Section V</div><div class="h2">42-person team</div><div class="desc">AI engineers + production + ops. Scales to 25K at Series A with +8 production only.</div>';
+  o+='<div style="display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:20px">';
+  o+='<div class="card" style="text-align:center;max-width:360;width:100%;border-color:rgba(79,255,176,.3)"><div style="font-size:15px;font-weight:700;color:'+C.ac+';margin-bottom:2px">CEO / co-founder</div><div style="font-size:11px;color:'+C.tx2+'">Vision, fundraising, partnerships. Technical mfg + AI background.</div></div>';
+  o+='<div class="org-cv"></div>';
+  o+='<div class="org-3">';
+  o+=oc("VP Engineering & AI",C.bl,"16 people","All AI agents, twins, platform.",["Perception (4)","ML/twins (4)","Robotics (4)","Platform (3)","VP (1)"],"rgba(74,158,255,.3)");
+  o+=oc("VP Manufacturing",C.co,"18 people","Factory floor. Welders, machinists, painters, assemblers + cobots.",["Frame (5)","Paint (3)","Assembly (5)","QC (3)","Warehouse (1)","VP (1)"],"rgba(255,122,92,.3)");
+  o+=oc("VP Operations",C.ac,"7 people","Supply chain, sales, finance, people.",["Supply (2)","Sales (2)","Finance (1)","People (1)","VP (1)"],"rgba(79,255,176,.3)");
+  o+='</div></div>';
+  o+='<div class="mrow"><div class="mc"><div class="mc-v" style="color:'+C.ac+'">42</div><div class="mc-l mn">Total team</div></div><div class="mc"><div class="mc-v" style="color:'+C.bl+'">16</div><div class="mc-l mn">AI/eng</div></div><div class="mc"><div class="mc-v" style="color:'+C.co+'">18</div><div class="mc-l mn">Production</div></div><div class="mc"><div class="mc-v" style="color:'+C.ac+'">7+1</div><div class="mc-l mn">Ops+CEO</div></div></div>';
+  o+='<div class="fnote"><p>Payroll: ~$5.8M/yr ($138K avg loaded). Scales to 25K/yr at Series A with +8 production staff, no AI team growth.</p></div>';
+  el.innerHTML=o;
+}
+
+render();
+</script>
+</body>
+</html>
